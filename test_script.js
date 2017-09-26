@@ -12,15 +12,15 @@ const client = new pg.Client({
 
 const query = process.argv[2]
 
-function formatDate( date ) {
+function formatDate(date) {
     return date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
   }
   
-  function printPerson( person ) {
+  function printPerson(person) {
     console.log("- " + person.id + ": " + person.first_name + " " + person.last_name + ", born '" + formatDate(person.birthdate) + "'");
   }
   
-  function printAllPersons( rows ) {
+  function printAllPersons(rows) {
     rows.forEach(printPerson);
   }
   
