@@ -10,16 +10,30 @@ const client = new pg.Client({
   ssl      : settings.ssl
 });
 
+const query = process.argv[2]
 
-client.connect((err) => {
-  if (err) {
-    return console.error("Connection Error", err);
+function formatDate( date ) {
+    return date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
   }
-  client.query("SELECT $1::int AS number", ["1"], (err, result) => {
+  
+  function printPerson( person ) {
+    console.log("- " + person.id + ": " + person.first_name + " " + person.last_name + ", born '" + formatDate(person.birthdate) + "'");
+  }
+  
+  function printAllPersons( rows ) {
+    rows.forEach(printPerson);
+  }
+  
+  client.connect((err) => {
     if (err) {
-      return console.error("error running query", err);
+      return console.error("Connection Error", err);
     }
-    console.log(result.rows[0].number); //output: 1
+    client.query("SELECT * FROM famous_people WHERE first_name LIKE $1::text OR last_name LIKE $1::text", [query], (err, result) => {
+      if (err) {
+        return console.error("error running query", err);
+      }
+      printAllPersons(result.rows)
+  
     client.end();
   });
 });
